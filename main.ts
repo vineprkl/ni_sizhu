@@ -328,7 +328,8 @@ Deno.serve({ port: 8000 }, async (req) => {
     const province = params.get("province");
     const city = params.get("city");
     if (!year || !month || !day || !hour || !province || !city) {
-      return new Response(JSON.stringify({ error: "缺少八字排盘必须的参数" }), { status: 400, headers: { "Content-Type": "application/json; charset=utf-8" }, });
+      const usage = `调用格式: /api/bazi?year=1990&month=1&day=20&hour=15&province=江苏&city=无锡`;
+      return new Response(JSON.stringify({ error: "缺少必需参数", usage: usage }), { status: 400, headers: { "Content-Type": "application/json; charset=utf-8" }, });
     }
     const result = await getBaziChart(year, month, day, hour, parseInt(params.get("minute") || "0"), parseInt(params.get("gender") || "1"), province, city);
     return new Response(JSON.stringify(result, null, 2), { headers: { "Content-Type": "application/json; charset=utf-8" }, });
@@ -343,7 +344,8 @@ Deno.serve({ port: 8000 }, async (req) => {
     const minute = parseInt(params.get("minute") || "0");
 
     if (!year || !month || !day || !hour) {
-         return new Response(JSON.stringify({ error: "缺少六爻起卦必须的参数 (year, month, day, hour)" }), { status: 400, headers: { "Content-Type": "application/json; charset=utf-8" }, });
+        const usage = `调用格式: /api/liuyao?year=2024&month=6&day=20&hour=11&minute=30`;
+        return new Response(JSON.stringify({ error: "缺少必需参数", usage: usage }), { status: 400, headers: { "Content-Type": "application/json; charset=utf-8" }, });
     }
     const result = await getLiuYaoChart(year, month, day, hour, minute);
     return new Response(JSON.stringify(result, null, 2), { headers: { "Content-Type": "application/json; charset=utf-8" }, });
