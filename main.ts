@@ -144,14 +144,14 @@ function parseYaoCi(yaoCi: string): { relation: string, stemBranch: string, five
 
 // 核心函数：获取并解析六爻盘
 async function getLiuYaoChart(
-    year: number, month: number, day: number, hour: number, minute: number
+    birthYear: number, year: number, month: number, day: number, hour: number, minute: number
 ): Promise<Record<string, any>> {
 
     // 1. 准备表单数据 (包含所有必需的预设值)
     const hourMap = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
     const earthlyBranch = hourMap[Math.floor((hour + 1) / 2) % 12];
     const formData: { [key: string]: string | number } = {
-        txtYear: 1990, txtName: '某人', rdoSex: 1, txtEvent: '要问的事情',
+        txtYear: birthYear, txtName: '某人', rdoSex: 1, txtEvent: '要问的事情',
         rdoLiFa: 0, cboYear: year, cboMonth: month, cboDay: day,
         cboHour: `${hour}-${earthlyBranch}`, cboMinute: minute,
         cboPanShi: 0, rdoQiGua: 0, cboGua1: '乾一', cboGua2: '乾一',
@@ -337,6 +337,7 @@ Deno.serve({ port: 8000 }, async (req) => {
   
   if (url.pathname === "/api/liuyao") {
     const params = url.searchParams;
+    const birthYear = parseInt(params.get("birthYear") || "1990");
     const year = parseInt(params.get("year") || "");
     const month = parseInt(params.get("month") || "");
     const day = parseInt(params.get("day") || "");
@@ -344,10 +345,10 @@ Deno.serve({ port: 8000 }, async (req) => {
     const minute = parseInt(params.get("minute") || "0");
 
     if (!year || !month || !day || !hour) {
-        const usage = `调用格式: /api/liuyao?year=2024&month=6&day=20&hour=11&minute=30`;
+        const usage = `调用格式: /api/liuyao?birthYear=1990&year=2024&month=6&day=20&hour=11&minute=30`;
         return new Response(JSON.stringify({ error: "缺少必需参数", usage: usage }), { status: 400, headers: { "Content-Type": "application/json; charset=utf-8" }, });
     }
-    const result = await getLiuYaoChart(year, month, day, hour, minute);
+    const result = await getLiuYaoChart(birthYear, year, month, day, hour, minute);
     return new Response(JSON.stringify(result, null, 2), { headers: { "Content-Type": "application/json; charset=utf-8" }, });
   }
 
